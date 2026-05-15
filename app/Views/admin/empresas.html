@@ -1,0 +1,53 @@
+<?php use App\Services\AuthService; ?>
+
+<section class="dashboard-header card reveal">
+    <div>
+        <span class="badge badge-admin">🛡️ Painel Administrativo</span>
+        <h1>Empresas cadastradas</h1>
+        <p class="muted">Selecione uma empresa para visualizar e gerenciar os chamados abertos por seus usuários.</p>
+    </div>
+    <div class="dashboard-actions">
+        <div class="metric-card">
+            <strong><?= e((string) count($empresas)) ?></strong>
+            <span>empresa(s)</span>
+        </div>
+    </div>
+</section>
+
+<?php if (!$empresas): ?>
+    <div class="empty-state card reveal">
+        <span>🏢</span>
+        <h3>Nenhuma empresa encontrada</h3>
+        <p>Aguarde o cadastro de usuários para que as empresas apareçam aqui.</p>
+    </div>
+<?php else: ?>
+    <div class="empresas-grid reveal">
+        <?php foreach ($empresas as $emp): ?>
+            <a class="empresa-card" href="<?= e(url('/admin/chamados')) ?>?empresa_id=<?= e((string)$emp['id']) ?>">
+                <div class="empresa-card-header">
+                    <span class="empresa-icon">🏢</span>
+                    <h3><?= e($emp['nome']) ?></h3>
+                </div>
+                <div class="empresa-stats">
+                    <div class="stat">
+                        <strong><?= e((string)($emp['total_usuarios'] ?? 0)) ?></strong>
+                        <span>usuário(s)</span>
+                    </div>
+                    <div class="stat">
+                        <strong><?= e((string)($emp['total_chamados'] ?? 0)) ?></strong>
+                        <span>chamado(s)</span>
+                    </div>
+                    <div class="stat <?= ($emp['chamados_abertos'] ?? 0) > 0 ? 'stat-alert' : '' ?>">
+                        <strong><?= e((string)($emp['chamados_abertos'] ?? 0)) ?></strong>
+                        <span>aberto(s)</span>
+                    </div>
+                    <div class="stat <?= ($emp['chamados_em_andamento'] ?? 0) > 0 ? 'stat-warn' : '' ?>">
+                        <strong><?= e((string)($emp['chamados_em_andamento'] ?? 0)) ?></strong>
+                        <span>em andamento</span>
+                    </div>
+                </div>
+                <span class="empresa-ver">Ver chamados →</span>
+            </a>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>

@@ -1,0 +1,86 @@
+<?php
+use App\Services\AuthService;
+use App\Services\CsrfService;
+$usuario = AuthService::usuario();
+$total = count($chamados);
+?>
+<section class="dashboard-header card reveal">
+    <div>
+        <span class="badge">Empresa: <?= e($usuario['empresa_nome'] ?? '') ?></span>
+        <h1>Meus chamados</h1>
+        <p class="muted">Bem-vindo, <?= e($usuario['nome'] ?? '') ?>. Aqui você controla os chamados de suporte vinculados à sua conta.</p>
+    </div>
+    <div class="dashboard-actions">
+        <div class="metric-card">
+            <strong><?= e((string)$total) ?></strong>
+            <span>chamado(s)</span>
+        </div>
+        <a class="btn primary" href="<?= e(url('/chamados/novo')) ?>">Novo chamado</a>
+    </div>
+</section>
+
+<section class="card reveal">
+    <div class="toolbar">
+        <div>
+            <h2>Lista de chamados</h2>
+            <p class="muted">Pesquise, filtre e gerencie seus registros.</p>
+        </div>
+        <div class="toolbar-controls">
+            <input type="search" data-table-search placeholder="Buscar por título, status ou prioridade" aria-label="Buscar chamados">
+            <select data-status-filter aria-label="Filtrar por status">
+                <option value="">Todos os status</option>
+                <option value="Aberto">Aberto</option>
+                <option value="Em andamento">Em andamento</option>
+                <option value="Resolvido">Resolvido</option>
+                <option value="Cancelado">Cancelado</option>
+            </select>
+        </div>
+    </div>
+
+    <?php if (!$chamados): ?>
+        <div class="empty-state">
+            <span>🧾</span>
+            <h3>Nenhum chamado cadastrado ainda</h3>
+            <p>Crie o primeiro chamado para testar o CRUD do modelo de domínio principal.</p>
+            <a class="btn primary" href="<?= e(url('/chamados/novo')) ?>">Cadastrar chamado</a>
+        </div>
+    <?php else: ?>
+        <div class="table-wrapper">
+            <table data-chamados-table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título / Descrição</th>
+                        <th>Prioridade</th>
+                        <th>Status</th>
+                        <th>Atualizado</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($chamados as $chamado): ?>
+                        <tr data-row data-status="<?= e($chamado['status']) ?>">
+                            <td>#<?= e((string)$chamado['id']) ?></td>
+                            <td>
+                                <strong><?= e($chamado['titulo']) ?></strong><br>
+                                <small><?= e(mb_substr($chamado['descricao'], 0, 110)) ?><?= mb_strlen($chamado['descricao']) > 110 ? '...' : '' ?></small>
+                            </td>
+                            <td><span class="pill priority-<?= e(mb_strtolower(str_replace('í', 'i', $chamado['prioridade']))) ?>"><?= e($chamado['prioridade']) ?></span></td>
+                            <td><span class="status-label"><?= e($chamado['status']) ?></span></td>
+                            <td><?= e($chamado['atualizado_em']) ?></td>
+                            <td class="actions-cell">
+                                <a class="btn tiny secondary" href="<?= e(url('/chamados/editar')) ?>?id=<?= e((string)$chamado['id']) ?>">Editar</a>
+                                <form action="<?= e(url('/chamados/remover')) ?>" method="post" data-delete-form>
+                                    <input type="hidden" name="csrf_token" value="<?= e(CsrfService::token()) ?>">
+                                    <input type="hidden" name="id" value="<?= e((string)$chamado['id']) ?>">
+                                    <button class="btn tiny danger" type="submit">Remover</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <p class="muted no-results" data-no-results hidden>Nenhum chamado encontrado com esse filtro.</p>
+    <?php endif; ?>
+</section>

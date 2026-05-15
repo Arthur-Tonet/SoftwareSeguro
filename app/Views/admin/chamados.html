@@ -1,0 +1,90 @@
+<?php use App\Services\CsrfService; ?>
+<section class="dashboard-header card reveal">
+    <div>
+        <span class="badge badge-admin">🛡️ Admin</span>
+        <h1><?= e($empresa['nome']) ?></h1>
+        <p class="muted">Gerencie todos os chamados desta empresa. Você pode alterar o status de qualquer chamado.</p>
+    </div>
+    <div class="dashboard-actions">
+        <div class="metric-card">
+            <strong><?= e((string) count($chamados)) ?></strong>
+            <span>chamado(s)</span>
+        </div>
+        <a class="btn secondary" href="<?= e(url('/admin')) ?>">← Voltar às empresas</a>
+    </div>
+</section>
+
+<section class="card reveal">
+    <div class="toolbar">
+        <div>
+            <h2>Chamados da empresa</h2>
+            <p class="muted">Pesquise e filtre os chamados. Altere o status diretamente na tabela.</p>
+        </div>
+        <div class="toolbar-controls">
+            <input type="search" data-table-search placeholder="Buscar por título, usuário ou status" aria-label="Buscar chamados">
+            <select data-status-filter aria-label="Filtrar por status">
+                <option value="">Todos os status</option>
+                <option value="Aberto">Aberto</option>
+                <option value="Em andamento">Em andamento</option>
+                <option value="Resolvido">Resolvido</option>
+                <option value="Cancelado">Cancelado</option>
+            </select>
+        </div>
+    </div>
+
+    <?php if (!$chamados): ?>
+        <div class="empty-state">
+            <span>✅</span>
+            <h3>Nenhum chamado para esta empresa</h3>
+            <p>Quando os usuários abrirem chamados, eles aparecerão aqui.</p>
+        </div>
+    <?php else: ?>
+        <div class="table-wrapper">
+            <table data-chamados-table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuário</th>
+                        <th>Título / Descrição</th>
+                        <th>Prioridade</th>
+                        <th>Status</th>
+                        <th>Criado em</th>
+                        <th>Alterar Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($chamados as $chamado): ?>
+                        <tr data-row data-status="<?= e($chamado['status']) ?>">
+                            <td>#<?= e((string)$chamado['id']) ?></td>
+                            <td>
+                                <strong><?= e($chamado['usuario_nome']) ?></strong><br>
+                                <small><?= e($chamado['usuario_email']) ?></small>
+                            </td>
+                            <td>
+                                <strong><?= e($chamado['titulo']) ?></strong><br>
+                                <small><?= e(mb_substr($chamado['descricao'], 0, 100)) ?><?= mb_strlen($chamado['descricao']) > 100 ? '...' : '' ?></small>
+                            </td>
+                            <td><span class="pill priority-<?= e(mb_strtolower(str_replace('í','i',$chamado['prioridade']))) ?>"><?= e($chamado['prioridade']) ?></span></td>
+                            <td><span class="status-label status-<?= e(mb_strtolower(str_replace(' ','-',$chamado['status']))) ?>"><?= e($chamado['status']) ?></span></td>
+                            <td><?= e($chamado['criado_em']) ?></td>
+                            <td class="actions-cell">
+                                <form action="<?= e(url('/admin/status')) ?>" method="post" class="status-form">
+                                    <input type="hidden" name="csrf_token" value="<?= e(CsrfService::token()) ?>">
+                                    <input type="hidden" name="id" value="<?= e((string)$chamado['id']) ?>">
+                                    <input type="hidden" name="empresa_id" value="<?= e((string)$empresa['id']) ?>">
+                                    <select name="status" aria-label="Novo status do chamado #<?= e((string)$chamado['id']) ?>">
+                                        <?php foreach (['Aberto', 'Em andamento', 'Resolvido', 'Cancelado'] as $s): ?>
+                                            <option value="<?= e($s) ?>" <?= $chamado['status'] === $s ? 'selected' : '' ?>><?= e($s) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <button class="btn tiny primary" type="submit">Salvar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <p class="muted no-results" data-no-results hidden>Nenhum chamado encontrado com esse filtro.</p>
+    <?php endif; ?>
+</section>

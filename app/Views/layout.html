@@ -1,0 +1,77 @@
+<?php
+use App\Services\AuthService;
+use App\Services\CsrfService;
+$usuarioLogado = AuthService::usuario();
+$mensagens = consumeFlash();
+?>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="HelpIT: sistema seguro de chamados de TI com PHP, MariaDB, MVC, HTML, CSS e JavaScript.">
+    <title><?= e($titulo ?? 'HelpIT') ?></title>
+
+    <!-- CSS conectado aqui. Todas as telas HTML são carregadas dentro deste layout. -->
+    <link rel="icon" href="<?= e(asset('/assets/img/helpit-logo.svg')) ?>" type="image/svg+xml">
+    <link rel="stylesheet" href="<?= e(asset('/assets/css/style.css')) ?>?v=20260502">
+</head>
+<body>
+<div class="app-shell">
+    <header class="topbar">
+        <a class="brand" href="<?= e(url('/')) ?>" aria-label="Página inicial HelpIT">
+            <img src="<?= e(asset('/assets/img/helpit-logo.svg')) ?>" alt="Logo HelpIT" class="brand-logo">
+            <span>HelpIT</span>
+        </a>
+
+        <button class="mobile-menu-button" type="button" data-menu-button aria-label="Abrir menu de navegação">
+            <span></span><span></span><span></span>
+        </button>
+
+        <nav class="main-nav" data-menu>
+            <a href="<?= e(url('/')) ?>">Início</a>
+            <?php if ($usuarioLogado): ?>
+                <?php if (($usuarioLogado['perfil'] ?? '') === 'admin'): ?>
+                    <a href="<?= e(url('/admin')) ?>" class="nav-highlight-admin">🛡️ Admin</a>
+                <?php else: ?>
+                    <a href="<?= e(url('/chamados')) ?>">Chamados</a>
+                <?php endif; ?>
+                <a href="<?= e(url('/diagnostico')) ?>">Diagnóstico</a>
+                <span class="nav-user">Olá, <?= e($usuarioLogado['nome'] ?? 'Usuário') ?></span>
+                <form action="<?= e(url('/logout')) ?>" method="post" class="inline-form">
+                    <input type="hidden" name="csrf_token" value="<?= e(CsrfService::token()) ?>">
+                    <button class="link-button" type="submit">Sair</button>
+                </form>
+            <?php else: ?>
+                <a href="<?= e(url('/diagnostico')) ?>">Diagnóstico</a>
+                <a href="<?= e(url('/login')) ?>">Entrar</a>
+                <a href="<?= e(url('/cadastro')) ?>" class="nav-highlight">Cadastrar</a>
+            <?php endif; ?>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="alerts" aria-live="polite">
+            <?php foreach ($mensagens as $tipo => $lista): ?>
+                <?php foreach ($lista as $mensagem): ?>
+                    <div class="alert <?= e($tipo) ?>" data-alert>
+                        <span><?= e($mensagem) ?></span>
+                        <button type="button" aria-label="Fechar aviso" data-close-alert>×</button>
+                    </div>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+        </section>
+
+        <?php require $arquivoView; ?>
+    </main>
+
+    <footer class="footer">
+        <strong>HelpIT RA2</strong>
+        <span>PHP + MariaDB + MVC + HTML + CSS + JavaScript + codificação segura.</span>
+    </footer>
+</div>
+
+<!-- JavaScript conectado aqui. Como o layout envolve todas as telas, o JS funciona em login, cadastro e chamados. -->
+<script src="<?= e(asset('/assets/js/app.js')) ?>?v=20260502" defer></script>
+</body>
+</html>

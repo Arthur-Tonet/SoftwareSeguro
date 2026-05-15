@@ -1,0 +1,40 @@
+<?php
+namespace App\Services;
+
+final class SecurityService
+{
+    public static function validarNome(string $nome): bool
+    {
+        return (bool) preg_match('/^[\p{L}\s\'\-]{3,120}$/u', trim($nome));
+    }
+
+    public static function validarEmail(string $email): bool
+    {
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false && strlen($email) <= 180;
+    }
+
+    public static function validarSenhaForte(string $senha): bool
+    {
+        return strlen($senha) >= 8
+            && preg_match('/[A-Z]/', $senha)
+            && preg_match('/[a-z]/', $senha)
+            && preg_match('/[0-9]/', $senha)
+            && preg_match('/[^A-Za-z0-9]/', $senha);
+    }
+
+    public static function validarTexto(string $texto, int $min, int $max): bool
+    {
+        $texto = trim($texto);
+        return mb_strlen($texto) >= $min && mb_strlen($texto) <= $max;
+    }
+
+    public static function senhaHash(string $senha): string
+    {
+        return password_hash($senha, PASSWORD_DEFAULT);
+    }
+
+    public static function verificarSenha(string $senha, string $hash): bool
+    {
+        return password_verify($senha, $hash);
+    }
+}

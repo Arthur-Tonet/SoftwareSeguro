@@ -1,0 +1,64 @@
+<section class="hero card reveal">
+    <div class="hero-content">
+        <span class="badge">Software Seguro — Trabalho RA2</span>
+        <h1>HelpIT: chamados de TI com autenticação e segurança aplicada</h1>
+        <p>
+            Sistema web completo para empresas registrarem chamados de suporte, com cadastro por código de empresa,
+            login seguro, CRUD de chamados e proteção contra falhas comuns como SQL Injection, XSS, CSRF e força bruta.
+        </p>
+        <div class="actions">
+            <a class="btn primary" href="<?= e(url('/cadastro')) ?>">Criar conta</a>
+            <a class="btn secondary" href="<?= e(url('/login')) ?>">Entrar no sistema</a>
+        </div>
+    </div>
+
+    <aside class="hero-panel" aria-label="Resumo dos requisitos implementados">
+        <div class="status-card online">
+            <span class="status-dot"></span>
+            <strong>Ambiente seguro ativo</strong>
+            <small>MVC + PDO + CSRF + hash de senha</small>
+        </div>
+        <ul class="check-list">
+            <li>Cadastro com validação em HTML, JS e PHP</li>
+            <li>Login com bloqueio após 5 falhas</li>
+            <li>Chamados vinculados ao usuário autenticado</li>
+            <li>Auditoria de ações importantes</li>
+        </ul>
+    </aside>
+</section>
+
+<section class="grid three feature-grid">
+    <article class="card small-card reveal">
+        <span class="feature-icon">🏠</span>
+        <h2>T1 — Tela Inicial</h2>
+        <p>Apresenta o sistema, opções de entrada e resumo das proteções implementadas.</p>
+    </article>
+    <article class="card small-card reveal">
+        <span class="feature-icon">🔐</span>
+        <h2>T2/T3 — Cadastro e Login</h2>
+        <p>Formulários com validação, senha forte, hash, sessão segura, CSRF e controle de tentativas.</p>
+    </article>
+    <article class="card small-card reveal">
+        <span class="feature-icon">🧾</span>
+        <h2>T4 — CRUD de Chamados</h2>
+        <p>Criação, listagem, edição e remoção de chamados usando autorização por usuário.</p>
+    </article>
+</section>
+
+<section class="card security-section reveal">
+    <div>
+        <span class="badge">Camadas do projeto</span>
+        <h2>HTML, CSS e JavaScript integrados com PHP</h2>
+        <p>
+            O HTML fica nas Views PHP, o CSS em <code>public/assets/css/style.css</code> e o JavaScript em
+            <code>public/assets/js/app.js</code>. O PHP processa as regras de negócio no servidor e o JavaScript melhora a experiência do usuário.
+        </p>
+    </div>
+    <div class="security-tags">
+        <span>HTML semântico</span>
+        <span>CSS responsivo</span>
+        <span>JS de validação</span>
+        <span>PHP MVC</span>
+        <span>MariaDB</span>
+    </div>
+</section>

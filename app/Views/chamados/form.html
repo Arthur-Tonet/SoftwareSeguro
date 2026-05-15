@@ -1,0 +1,59 @@
+<?php use App\Services\CsrfService; ?>
+<?php
+$tituloValor = old('titulo', $chamado['titulo'] ?? '');
+$descricaoValor = old('descricao', $chamado['descricao'] ?? '');
+$prioridadeValor = old('prioridade', $chamado['prioridade'] ?? 'Media');
+$statusValor = old('status', $chamado['status'] ?? 'Aberto');
+$editando = $chamado !== null;
+?>
+<section class="form-layout reveal">
+    <aside class="form-help card">
+        <span class="badge">T4 — Modelo de domínio</span>
+        <h1><?= e($titulo) ?></h1>
+        <p>O chamado é a entidade principal do sistema. Ele possui título, descrição, prioridade, status e vínculo com o usuário autenticado.</p>
+        <ul class="check-list">
+            <li>Validação no front-end e no back-end</li>
+            <li>CSRF token obrigatório</li>
+            <li>Persistência via Repository/DAO</li>
+            <li>Autorização por usuário logado</li>
+        </ul>
+    </aside>
+
+    <section class="card wide">
+        <form method="post" action="<?= e(url($acao)) ?>" data-secure-form data-chamado-form>
+            <input type="hidden" name="csrf_token" value="<?= e(CsrfService::token()) ?>">
+
+            <label for="titulo">Título do chamado</label>
+            <input id="titulo" type="text" name="titulo" required minlength="5" maxlength="160" value="<?= e($tituloValor) ?>" placeholder="Ex: Computador não liga">
+
+            <label for="descricao">Descrição</label>
+            <textarea id="descricao" name="descricao" required minlength="10" maxlength="5000" rows="8" placeholder="Descreva o problema com detalhes..." data-counter="descricaoContador"><?= e($descricaoValor) ?></textarea>
+            <small id="descricaoContador" class="char-counter">0/5000 caracteres</small>
+
+            <div class="grid two">
+                <div>
+                    <label for="prioridade">Prioridade</label>
+                    <select id="prioridade" name="prioridade" required>
+                        <?php foreach (['Baixa', 'Media', 'Alta', 'Critica'] as $opcao): ?>
+                            <option value="<?= e($opcao) ?>" <?= $prioridadeValor === $opcao ? 'selected' : '' ?>><?= e($opcao) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div>
+                    <label for="status">Status</label>
+                    <select id="status" name="status" required>
+                        <?php foreach (['Aberto', 'Em andamento', 'Resolvido', 'Cancelado'] as $opcao): ?>
+                            <option value="<?= e($opcao) ?>" <?= $statusValor === $opcao ? 'selected' : '' ?>><?= e($opcao) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn primary" type="submit"><?= $editando ? 'Salvar alterações' : 'Cadastrar chamado' ?></button>
+                <a class="btn secondary" href="<?= e(url('/chamados')) ?>">Cancelar</a>
+            </div>
+        </form>
+    </section>
+</section>
+<?php unset($_SESSION['old']); ?>

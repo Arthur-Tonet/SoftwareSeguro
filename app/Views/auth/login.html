@@ -1,0 +1,34 @@
+<?php use App\Services\CsrfService; ?>
+<section class="auth-layout reveal">
+    <aside class="auth-side card">
+        <span class="badge">Acesso protegido</span>
+        <h1>Entrar no HelpIT</h1>
+        <p>Faça login para acessar o painel de chamados da sua empresa.</p>
+        <ul class="check-list">
+            <li>Senha validada com hash seguro no servidor</li>
+            <li>Bloqueio temporário após 5 tentativas inválidas</li>
+            <li>Token CSRF em todos os formulários</li>
+        </ul>
+    </aside>
+
+    <section class="auth-card card">
+        <h2>Login</h2>
+        <p class="muted">Use o e-mail e a senha cadastrados.</p>
+        <form method="post" action="<?= e(url('/login')) ?>" autocomplete="on" data-secure-form>
+            <input type="hidden" name="csrf_token" value="<?= e(CsrfService::token()) ?>">
+
+            <label for="email">E-mail</label>
+            <input id="email" type="email" name="email" value="<?= e(old('email')) ?>" required maxlength="180" autocomplete="email" placeholder="seu.email@empresa.com">
+
+            <label for="senha">Senha</label>
+            <div class="password-field">
+                <input id="senha" type="password" name="senha" required autocomplete="current-password" placeholder="Digite sua senha">
+                <button type="button" data-toggle-password aria-label="Mostrar ou esconder senha">Mostrar</button>
+            </div>
+
+            <button class="btn primary full" type="submit">Entrar</button>
+        </form>
+        <p class="center">Ainda não tem conta? <a href="<?= e(url('/cadastro')) ?>">Cadastre-se</a>.</p>
+    </section>
+</section>
+<?php unset($_SESSION['old']); ?>

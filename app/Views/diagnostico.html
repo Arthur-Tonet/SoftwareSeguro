@@ -1,0 +1,51 @@
+<section class="card reveal">
+    <span class="badge">Diagnóstico</span>
+    <h1>Verificação do PHP, CSS, JS e Banco de Dados</h1>
+    <p class="muted">Esta tela serve para confirmar se o backend PHP está carregando, se o layout está puxando os assets e se o MariaDB está respondendo.</p>
+
+    <div class="grid two diagnostics-grid">
+        <article class="status-card <?= $status['conexao'] ? 'online' : 'offline' ?>">
+            <span class="status-dot"></span>
+            <strong>Banco de dados</strong>
+            <small><?= e($status['mensagem']) ?></small>
+        </article>
+        <article class="status-card online">
+            <span class="status-dot"></span>
+            <strong>Front-end</strong>
+            <small>CSS e JS carregados pelo layout principal.</small>
+        </article>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Host do banco</td>
+                <td><?= e($status['host']) ?></td>
+            </tr>
+            <tr>
+                <td>Nome do banco</td>
+                <td><?= e($status['banco']) ?></td>
+            </tr>
+            <?php foreach ($status['tabelas'] as $tabela => $total): ?>
+                <tr>
+                    <td>Tabela <?= e($tabela) ?></td>
+                    <td><?= e((string) $total) ?> registro(s)</td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="actions">
+        <a class="btn primary" href="<?= e(url('/cadastro')) ?>">Testar cadastro</a>
+        <a class="btn secondary" href="<?= e(url('/login')) ?>">Testar login</a>
+        <a class="btn secondary" href="<?= e(url('/chamados')) ?>">Ir para chamados</a>
+    </div>
+</section>

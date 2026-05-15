@@ -1,0 +1,55 @@
+<?php use App\Services\CsrfService; ?>
+<section class="auth-layout reveal">
+    <aside class="auth-side card">
+        <span class="badge">Nova conta</span>
+        <h1>Cadastro seguro</h1>
+        <p>Crie sua conta usando o código de empresa fornecido. O sistema valida os campos no navegador e no servidor.</p>
+        <div class="code-box">
+            <strong>Códigos de teste</strong>
+            <span>ALPHA2026</span>
+            <span>BETA2026</span>
+            <span>SIGMA2026</span>
+            <span>DELTA2026</span>
+        </div>
+    </aside>
+
+    <section class="auth-card card wide">
+        <h2>Criar conta</h2>
+        <form method="post" action="<?= e(url('/cadastro')) ?>" autocomplete="on" data-secure-form data-register-form>
+            <input type="hidden" name="csrf_token" value="<?= e(CsrfService::token()) ?>">
+            <div class="grid two">
+                <div>
+                    <label for="nome">Nome completo</label>
+                    <input id="nome" type="text" name="nome" value="<?= e(old('nome')) ?>" required minlength="3" maxlength="120" placeholder="Ex: Gustavo Silva">
+                </div>
+                <div>
+                    <label for="email">E-mail</label>
+                    <input id="email" type="email" name="email" value="<?= e(old('email')) ?>" required maxlength="180" placeholder="seu.email@empresa.com">
+                </div>
+                <div>
+                    <label for="codigo_empresa">Código da empresa</label>
+                    <input id="codigo_empresa" type="text" name="codigo_empresa" value="<?= e(old('codigo_empresa')) ?>" required maxlength="30" placeholder="Ex: ALPHA2026" data-uppercase>
+                </div>
+                <div>
+                    <label for="senha">Senha forte</label>
+                    <div class="password-field">
+                        <input id="senha" type="password" name="senha" required minlength="8" aria-describedby="regraSenha" placeholder="Crie uma senha forte" data-password-strength>
+                        <button type="button" data-toggle-password aria-label="Mostrar ou esconder senha">Mostrar</button>
+                    </div>
+                    <div class="password-meter" aria-hidden="true"><span data-password-bar></span></div>
+                    <small id="regraSenha" data-password-text>Mínimo 8 caracteres, com maiúscula, minúscula, número e símbolo.</small>
+                </div>
+                <div>
+                    <label for="confirmar_senha">Confirmar senha</label>
+                    <div class="password-field">
+                        <input id="confirmar_senha" type="password" name="confirmar_senha" required minlength="8" placeholder="Repita a senha">
+                        <button type="button" data-toggle-password aria-label="Mostrar ou esconder senha">Mostrar</button>
+                    </div>
+                </div>
+            </div>
+            <button class="btn primary full" type="submit">Cadastrar</button>
+        </form>
+        <p class="center">Já possui conta? <a href="<?= e(url('/login')) ?>">Entrar</a>.</p>
+    </section>
+</section>
+<?php unset($_SESSION['old']); ?>
