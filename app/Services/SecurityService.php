@@ -38,3 +38,5 @@ final class SecurityService
         return password_verify($senha, $hash);
     }
 }
+
+#Implementação  hash bcrypt de senha - CWE-916 ASVS V2.1
