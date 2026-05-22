@@ -43,3 +43,4 @@ final class SecurityService
         return password_verify($senha, $hash);
     }
 }
+    #leve mudança na branch-a :)
