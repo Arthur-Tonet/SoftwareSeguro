@@ -42,5 +42,9 @@ final class SecurityService
     {
         return password_verify($senha, $hash);
     }
+<<<<<<< HEAD
 }
     #alteração para rebase :D
+=======
+}
+>>>>>>> 4db3cc4f7d50a9cd3f4618b8d430168b257b38cb
