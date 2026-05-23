@@ -44,4 +44,4 @@ final class SecurityService
     }
 }
 
-#alteração rebase, mas dessa vez com conflito :)
+#alteração rebase, mas dessa vez com conflito :D
