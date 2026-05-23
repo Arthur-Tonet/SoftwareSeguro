@@ -43,8 +43,4 @@ final class SecurityService
         return password_verify($senha, $hash);
     }
 }
-<<<<<<< HEAD
-    #leve mudança na branch-a,
-=======
-    #leve mudança na branch-a, agora uma leve mudança na branch-b :)
->>>>>>> branch-b
+    #alteração para rebase :D
