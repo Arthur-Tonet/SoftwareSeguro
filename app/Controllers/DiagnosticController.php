@@ -3,10 +3,16 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Database;
+use App\Services\AuthService;
 use Throwable;
 
 final class DiagnosticController extends Controller
 {
+    public function __construct()
+    {
+        AuthService::exigirLogin();
+    }
+
     public function index(): void
     {
         $status = [
