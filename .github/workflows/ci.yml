@@ -1,0 +1,48 @@
+name: CI — Testes de Segurança HelpIT
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  testes:
+    name: PHPUnit — PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: [ "8.2", "8.3" ]
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, openssl, pdo, pdo_mysql
+          coverage: none
+
+      - name: Validar composer.json
+        run: composer validate --strict
+
+      - name: Cache das dependências Composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            composer-${{ matrix.php }}-
+
+      - name: Instalar dependências
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Executar testes com PHPUnit
+        run: composer test
+
+      - name: Resumo dos testes
+        if: always()
+        run: echo "Testes finalizados para PHP ${{ matrix.php }}"
