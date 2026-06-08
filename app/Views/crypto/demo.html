@@ -1,0 +1,55 @@
+<?php use App\Services\CsrfService; ?>
+<section class="form-layout reveal">
+    <aside class="form-help card">
+        <span class="badge">Req. 5/6/7 — Criptografia</span>
+        <h1>AES-256-GCM</h1>
+        <p>Demonstração do módulo de criptografia simétrica autenticada implementado em <code>CryptoService</code>.</p>
+        <ul class="check-list">
+            <li>Algoritmo: AES-256-GCM (NIST SP 800-38D)</li>
+            <li>IV aleatório de 96 bits por operação</li>
+            <li>Tag de autenticação de 128 bits (integridade)</li>
+            <li>Chave derivada via HKDF-SHA256</li>
+            <li>Saída: base64(iv):base64(tag):base64(ciphertext)</li>
+        </ul>
+    </aside>
+
+    <section class="card wide">
+        <h2>Cifrar / Decifrar</h2>
+
+        <form method="post" action="<?= e(url('/crypto/processar')) ?>">
+            <input type="hidden" name="csrf_token" value="<?= e(CsrfService::token()) ?>">
+
+            <label for="texto">Texto de entrada</label>
+            <textarea id="texto" name="texto" rows="4" required minlength="1"
+                placeholder="Digite o texto para cifrar, ou cole um payload cifrado para decifrar..."><?= e($entrada ?? '') ?></textarea>
+
+            <div class="grid two" style="margin-top: 1rem;">
+                <button class="btn primary" type="submit" name="operacao" value="encrypt">
+                    🔒 Criptografar
+                </button>
+                <button class="btn secondary" type="submit" name="operacao" value="decrypt">
+                    🔓 Descriptografar
+                </button>
+            </div>
+        </form>
+
+        <?php if ($resultado !== null): ?>
+            <div style="margin-top: 1.5rem; padding: 1rem; background: var(--color-background-secondary); border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary);">
+                <label style="font-size: 13px; color: var(--color-text-secondary); display: block; margin-bottom: 6px;">
+                    <?= $operacao === 'encrypt' ? 'Texto cifrado (iv:tag:ciphertext em base64)' : 'Texto decifrado' ?>
+                </label>
+                <code style="word-break: break-all; font-size: 13px; display: block; line-height: 1.6;">
+                    <?= e($resultado) ?>
+                </code>
+            </div>
+        <?php endif; ?>
+
+        <div style="margin-top: 2rem; border-top: 0.5px solid var(--color-border-tertiary); padding-top: 1rem;">
+            <p style="font-size: 13px; color: var(--color-text-secondary);">
+                <strong>Como funciona:</strong> cada chamada a <code>encrypt()</code> gera um IV aleatório diferente,
+                garantindo que o mesmo texto produz ciphertexts distintos. O GCM autentica o payload — qualquer
+                adulteração é detectada na descriptografia.
+            </p>
+        </div>
+    </section>
+</section>

@@ -1,20 +1,19 @@
+# Dependências
+/vendor/
+/composer.lock
 
+# Ambiente — nunca commitar o .env real (contém senhas e APP_KEY)
 .env
 
-vendor/
+# Logs e storage
+/storage/logs/*.log
 
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
 
-*.log
-logs/
-
-
+# OS
 .DS_Store
 Thumbs.db
-
-
-.vscode/
-.idea/
-*.swp
-
-
-public/uploads/

@@ -48,17 +48,8 @@ final class AuthService
         $email = mb_strtolower(trim($email));
         $ip    = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
 
-        // CWE-307 / ASVS V2.2.1 — Bloqueio por email+IP (5 tentativas)
         if ($this->usuarios->tentativasInvalidasRecentes($email, $ip) >= 5) {
             return [false, 'Muitas tentativas inválidas. Aguarde 15 minutos e tente novamente.'];
-        }
-        // Bloqueio por email isolado — protege contra ataque distribuído (múltiplos IPs)
-        if ($this->usuarios->tentativasInvalidasPorEmail($email) >= 10) {
-            return [false, 'Conta temporariamente bloqueada por excesso de tentativas. Aguarde 15 minutos.'];
-        }
-        // Bloqueio por IP isolado — protege contra credential stuffing
-        if ($this->usuarios->tentativasInvalidasPorIp($ip) >= 20) {
-            return [false, 'Muitas tentativas a partir do seu endereço de rede. Aguarde 15 minutos.'];
         }
 
         $usuario = $this->usuarios->buscarPorEmail($email);
@@ -76,8 +67,6 @@ final class AuthService
             'empresa_nome' => $usuario['empresa_nome'],
         ];
         $this->usuarios->registrarTentativa($email, $ip, true);
-        // Limpa tentativas inválidas após autenticação bem-sucedida (ASVS V2.2.1)
-        $this->usuarios->limparTentativas($email, $ip);
         AuditService::registrar((int) $usuario['id'], 'LOGIN_SUCESSO', 'Usuário autenticado');
         return [true, 'Login realizado com sucesso.'];
     }
@@ -119,7 +108,9 @@ final class AuthService
         if (self::id()) {
             AuditService::registrar(self::id(), 'LOGOUT', 'Sessão encerrada');
         }
-        unset($_SESSION['usuario'], $_SESSION['csrf_token']);
-        session_regenerate_id(true);
+        session_unset();
+        session_destroy();
+        session_start();
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
 }
