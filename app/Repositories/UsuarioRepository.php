@@ -1,5 +1,4 @@
 <?php
-// #4 implementa bloqueio de brute-force por email+IP - CWE-307 ASVS V2.2.1
 namespace App\Repositories;
 
 use App\Core\Database;
@@ -52,10 +51,6 @@ final class UsuarioRepository
         $stmt->execute([mb_strtolower(trim($email)), $ip, $sucesso ? 1 : 0]);
     }
 
-    /**
-     * Conta tentativas inválidas recentes por email+IP combinados (CWE-307 / ASVS V2.2.1).
-     * Limite: 5 tentativas em 15 minutos por par email+IP.
-     */
     public function tentativasInvalidasRecentes(string $email, string $ip): int
     {
         $stmt = $this->pdo->prepare(
@@ -65,50 +60,6 @@ final class UsuarioRepository
         );
         $stmt->execute([mb_strtolower(trim($email)), $ip]);
         return (int) ($stmt->fetch()['total'] ?? 0);
-    }
-
-    /**
-     * Conta tentativas inválidas recentes apenas por email, independente do IP.
-     * Protege contra ataques distribuídos (múltiplos IPs tentando o mesmo email).
-     * Limite: 10 tentativas em 15 minutos por email.
-     */
-    public function tentativasInvalidasPorEmail(string $email): int
-    {
-        $stmt = $this->pdo->prepare(
-            "SELECT COUNT(*) AS total FROM login_tentativas
-             WHERE email = ? AND sucesso = 0
-             AND criado_em >= (NOW() - INTERVAL 15 MINUTE)"
-        );
-        $stmt->execute([mb_strtolower(trim($email))]);
-        return (int) ($stmt->fetch()['total'] ?? 0);
-    }
-
-    /**
-     * Conta tentativas inválidas recentes apenas por IP, independente do email.
-     * Protege contra ataques de credential stuffing (1 IP testando muitos emails).
-     * Limite: 20 tentativas em 15 minutos por IP.
-     */
-    public function tentativasInvalidasPorIp(string $ip): int
-    {
-        $stmt = $this->pdo->prepare(
-            "SELECT COUNT(*) AS total FROM login_tentativas
-             WHERE ip = ? AND sucesso = 0
-             AND criado_em >= (NOW() - INTERVAL 15 MINUTE)"
-        );
-        $stmt->execute([$ip]);
-        return (int) ($stmt->fetch()['total'] ?? 0);
-    }
-
-    /**
-     * Remove todas as tentativas inválidas do par email+IP após login bem-sucedido.
-     * Evita que tentativas antigas bloqueiem usuário legítimo na próxima sessão.
-     */
-    public function limparTentativas(string $email, string $ip): void
-    {
-        $stmt = $this->pdo->prepare(
-            'DELETE FROM login_tentativas WHERE email = ? AND ip = ? AND sucesso = 0'
-        );
-        $stmt->execute([mb_strtolower(trim($email)), $ip]);
     }
 
     /** Lista todas as empresas (exceto a interna do admin) com contagem de chamados */

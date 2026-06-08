@@ -36,6 +36,7 @@ $mensagens = consumeFlash();
                 <?php else: ?>
                     <a href="<?= e(url('/chamados')) ?>">Chamados</a>
                 <?php endif; ?>
+                <a href="<?= e(url('/crypto')) ?>">🔒 Criptografia</a>
                 <a href="<?= e(url('/diagnostico')) ?>">Diagnóstico</a>
                 <span class="nav-user">Olá, <?= e($usuarioLogado['nome'] ?? 'Usuário') ?></span>
                 <form action="<?= e(url('/logout')) ?>" method="post" class="inline-form">

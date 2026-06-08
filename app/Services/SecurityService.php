@@ -28,14 +28,9 @@ final class SecurityService
         return mb_strlen($texto) >= $min && mb_strlen($texto) <= $max;
     }
 
-    /**
-     * Gera hash bcrypt da senha com custo padrão do PHP.
-     * Uso explícito de PASSWORD_BCRYPT garante o algoritmo independente
-     * da versão do PHP, conforme CWE-916 / ASVS V2.1.
-     */
     public static function senhaHash(string $senha): string
     {
-        return password_hash($senha, PASSWORD_BCRYPT);
+        return password_hash($senha, PASSWORD_DEFAULT);
     }
 
     public static function verificarSenha(string $senha, string $hash): bool
@@ -43,5 +38,3 @@ final class SecurityService
         return password_verify($senha, $hash);
     }
 }
-
-#alteração rebase, mas nada ta errado, confia pae a trt  2:D

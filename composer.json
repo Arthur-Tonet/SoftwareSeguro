@@ -2,6 +2,7 @@
     "name": "grupo5/helpit-ra2",
     "description": "Sistema de chamados de TI com PHP seguro — Software Seguro RA2",
     "type": "project",
+    "license": "proprietary",
     "require": {
         "php": ">=8.2"
     },

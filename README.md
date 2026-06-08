@@ -101,3 +101,30 @@ O `-v` apaga o volume do MariaDB e recria as tabelas pelo `schema.sql`.
 - **JS**: `public/assets/js/app.js` — conectado em `app/Views/layout.html`
 
 Como todas as telas passam pelo `layout.html`, o CSS e JS funcionam em todas as páginas.
+
+## Testes unitários (PHPUnit)
+
+Pré-requisito: [Composer](https://getcomposer.org/) instalado.
+
+```bash
+composer install
+composer test
+```
+
+Os testes cobrem:
+- `CryptoServiceTest` — AES-256-GCM (cifrar, decifrar, IV aleatório, adulteração, Unicode)
+- `CsrfServiceTest` — geração e validação do token CSRF com `hash_equals`
+- `SecurityServiceTest` — validação de senha forte, email, nome e hash bcrypt/Argon2
+
+## Módulo de Criptografia AES-256-GCM
+
+Acesse `/crypto` após login para demonstrar o módulo interativamente.
+
+- Algoritmo: AES-256-GCM (autenticado — confidencialidade + integridade)
+- IV aleatório de 96 bits por operação (nunca reutilizado)
+- Chave derivada via HKDF-SHA256 a partir da `APP_KEY` do `.env`
+- Implementado em `app/Services/CryptoService.php`
+
+## CI — GitHub Actions
+
+O workflow `.github/workflows/ci.yml` executa os testes automaticamente em cada push/PR para `main` e `develop`, nas versões PHP 8.2 e 8.3.

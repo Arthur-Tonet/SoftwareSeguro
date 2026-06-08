@@ -28,6 +28,7 @@ spl_autoload_register(function (string $classe): void {
 
 use App\Controllers\AuthController;
 use App\Controllers\ChamadoController;
+use App\Controllers\CryptoController;
 use App\Controllers\DiagnosticController;
 use App\Controllers\HomeController;
 use App\Controllers\AdminController;
@@ -63,6 +64,9 @@ try {
         $rota === '/admin'               && $metodo === 'GET'  => (new AdminController())->index(),
         $rota === '/admin/chamados'      && $metodo === 'GET'  => (new AdminController())->chamadosEmpresa(),
         $rota === '/admin/status'        && $metodo === 'POST' => (new AdminController())->atualizarStatus(),
+        // ── Criptografia (AES-256-GCM) ───────────────────────────────────────
+        $rota === '/crypto'              && $metodo === 'GET'  => (new CryptoController())->index(),
+        $rota === '/crypto/processar'    && $metodo === 'POST' => (new CryptoController())->processar(),
         default => (static function (): void {
             http_response_code(404);
             echo '<h1 style="font-family:sans-serif;color:#f8fafc;background:#0c1020;margin:0;padding:40px">404 — Página não encontrada.</h1>';
